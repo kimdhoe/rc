@@ -1,0 +1,472 @@
+" ==============================================================================
+" CONFIGURATIONS (copied from thoughtbot/dotfiles/vimrc)
+" ------------------------------------------------------------------------------
+" Leader
+let mapleader = " "
+let maplocalleader = '\\'
+" ------------------------------------------------------------------------------
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
+  syntax on
+endif
+
+" Load matchit.vim, but only if the user hasn't installed a newer version.
+if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==# ''
+  runtime! macros/matchit.vim
+endif
+" ------------------------------------------------------------------------------
+filetype plugin indent on
+" ------------------------------------------------------------------------------
+augroup vimrcEx
+  autocmd!
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it for commit messages, when the position is invalid, or when
+  " inside an event handler (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  " Set syntax highlighting for specific file types
+  autocmd BufRead,BufNewFile Appraisals set filetype=ruby
+  autocmd BufRead,BufNewFile *.md set filetype=markdown
+  autocmd BufRead,BufNewFile .{jscs,jshint,eslint,babel}rc set filetype=json
+augroup END
+" ------------------------------------------------------------------------------
+" When the type of shell script is /bin/sh, assume a POSIX-compatible
+" shell for syntax highlighting purposes.
+let g:is_posix = 1
+" ------------------------------------------------------------------------------
+" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
+if executable('ag')
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag -Q -l --nocolor --hidden -g "" %s'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+
+  if !exists(":Ag")
+    command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+    nnoremap \ :Ag<SPACE>
+  endif
+endif
+" ------------------------------------------------------------------------------
+" Tab completion
+" will insert tab at beginning of line,
+" will use completion if not at beginning
+set wildmode=list:longest,list:full
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
+endfunction
+inoremap <Tab> <c-r>=InsertTabWrapper()<cr>
+inoremap <S-Tab> <c-n>
+" ------------------------------------------------------------------------------
+" Treat <li> and <p> tags like the block tags they are
+let g:html_indent_tags = 'li\|p'
+" ------------------------------------------------------------------------------
+" configure syntastic syntax checking to check on open as well as save
+let g:syntastic_check_on_open=1
+let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute \"ng-"]
+let g:syntastic_eruby_ruby_quiet_messages =
+    \ {"regex": "possibly useless use of a variable in void context"}
+" ------------------------------------------------------------------------------
+
+" ==============================================================================
+" SETTINGS
+" ----------------------------------------------------------------- 1. important
+" Use vim defaults not vi defaults
+set nocompatible
+" ------------------------------------- 2. moving around, searching and patterns
+" Do incremental searching
+set incsearch
+" ----------------------------------------------------------- 4. displaying text
+" [*] Numbers
+set number         " [*]
+set numberwidth=5  " [*]
+" Display extra whitespace
+set list listchars=tab:»·,trail:·,nbsp:·
+" Number of screen lines to show around the cursor
+" set scrolloff=1
+" ----------------------------------------- 5. syntax, highlighting and spelling
+" Set spellfile to location that is guaranteed to exist, can be symlinked to
+" Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
+set spellfile=$HOME/.vim-spell-en.utf-8.add
+" [*] Make it obvious where 80 characters is
+set textwidth=80    " [*]
+set colorcolumn=+1  " [*]
+set hlsearch
+set background=dark
+colorscheme seoul256
+" ---------------------------------------------------------- 6. multiple windows
+" [*] Open new split panes to right and bottom, which feels more natural
+set splitbelow  " [*]
+set splitright  " [*]
+set statusline=[%n]\ %<%f\ %m\ \ [%R%H%W%Y][%{&ff}]\ \ %=\ l:\ %l/%L\ \ c:\ %c\ \ \ %p%%
+" Always display the status line
+set laststatus=2
+" ------------------------------------------------------------------ 8. terminal
+" Terminal connection is fast
+set ttyfast
+" -------------------------------------------------------- 12. messages and info
+" Show the cursor position all the time
+set ruler
+" Display incomplete commands
+set showcmd
+" ------------------------------------------------------------- 14. editing text
+" Autocomplete with dictionary words when spell check is on
+set complete+=kspell
+" Use one space, not two, after punctuation
+set nojoinspaces
+" When inserting a bracket, briefly jump to its match
+set showmatch
+" Numbers are recognozed as decimal for ctrl-a(x)
+set nrformats-=octal
+" Backspace deletes like most programs in insert mode
+set backspace=2
+" ------------------------------------------------------- 15. tabs and indenting
+" Softtabs, 2 spaces
+set tabstop=2
+set shiftwidth=2
+set shiftround
+set expandtab
+set smarttab
+set autoindent
+set smartindent
+" ---------------------------------------------------------------- 17. diff mode
+" Always use vertical diffs
+set diffopt+=vertical
+" ------------------------------------------------ 19. reading and writing files
+set nobackup
+set nowritebackup
+" Automatically :write before running commands
+set autowrite
+" ------------------------------------------------------------ 20. the swap file
+set nobackup
+" http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
+set noswapfile
+" ----------------------------------------------------- 21. command line editing
+set history=50
+" ---------------------------------------------------- 25. multi-byte characters
+set encoding=utf-8
+
+" ==============================================================================
+" MAPPINGS
+" ------------------------------------------------------------------------------
+" Switch between the last two files
+nnoremap <leader><leader> <c-^>
+" To the first or last non-blank character of the line
+nnoremap H ^
+vnoremap H ^
+nnoremap L $
+vnoremap L $
+" No arrow keys
+nnoremap <Left> :echoe "Use h"<CR>
+nnoremap <Right> :echoe "Use l"<CR>
+nnoremap <Up> :echoe "Use k"<CR>
+nnoremap <Down> :echoe "Use j"<CR>
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+" nnoremap <C-k> H
+" vnoremap <C-k> H
+" nnoremap <C-j> L
+" vnoremap <C-j> L
+" Open .vimrc in a new tab
+nnoremap <Leader>ve :tabe ~/.vimrc<CR>
+" Source .vimrc
+nnoremap <Leader>vs :source ~/.vimrc<CR>:noh<CR>
+" Return to normal mode
+inoremap jk <ESC>
+inoremap fd <ESC>
+" Make j and k work on visual lines
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+" Make Y behave as C and D
+nnoremap Y y$
+" Play a macro recorded to register 'q'
+nnoremap , @q
+" Substitute all word under the caret
+nnoremap <leader>gs :%s/\<<C-r><C-w>\>/
+" Substitute all word under the caret in current line
+nnoremap <leader>.s :s/\<<C-r><C-w>\>/
+" Highlight all word under the caret not jumping to next word
+" nnoremap * *N
+" Highlight all worlds exactly same as the word under the caret
+nnoremap * :set hlsearch<CR>:let @/='\<<C-r><C-w>\>'<CR>
+" :nohlsearch
+nnoremap <leader><CR> :noh<cr>
+" Highlight trailing whitespace
+" nnoremap <leader>w :match Error /  *$/<cr>
+" inside/around
+onoremap inb :<c-u>normal! f(vi(<cr>
+onoremap in( :<c-u>normal! f(vi(<cr>
+onoremap in{ :<c-u>normal! f{vi{<cr>
+onoremap in' :<c-u>normal! f'vi'<cr>
+onoremap iN' :<c-u>normal! F'vi'<cr>
+onoremap arb :<c-u>normal! f(va(<cr>
+onoremap ar( :<c-u>normal! f(va(<cr>
+onoremap ar{ :<c-u>normal! f{va{<cr>
+onoremap ar' :<c-u>normal! f'va'<cr>
+onoremap ilb :<c-u>normal! F(vi(<cr>
+onoremap il( :<c-u>normal! F)vi(<cr>
+onoremap il{ :<c-u>normal! F}vi{<cr>
+onoremap il' :<c-u>normal! F'vi'<cr>
+" Paste from system clipboard
+nnoremap <leader>p :set paste<cr>o<esc>"*]p:set nopaste<cr>
+nnoremap <leader>P :set paste<cr>O<esc>"*]p:set nopaste<cr>
+
+" ==============================================================================
+" PLUGIN CONFIGURATIONS
+" --------------------------------------------------------------------- Fugitive
+" Open Gstatus
+nnoremap <c-g>s :Gstatus<cr>
+" -------------------------------------------------------------------- Nerd Tree
+" Open/close
+nnoremap <C-h><C-l> :NERDTreeToggle<cr>
+" ------------------------------------------------------------------------ Emmet
+" Expand
+imap ,, <C-y>,
+" -------------------------------------------------------------------- EasyAlign
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+" -------------------------------------------------------------------- UltiSnips
+" Add custom snippets
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
+" --------------------------------------------------------------------- vim-test
+let test#strategy = 'tslime'
+let test#javascript#mocha#file_pattern = '\v\.test\.(js|jsx|coffee)$'
+nnoremap <silent> <leader>s :TestNearest<CR>
+nnoremap <silent> <leader>t :TestFile<CR>
+nnoremap <silent> <leader>l :TestLast<CR>
+nnoremap <silent> <leader>a :TestSuite<CR>
+" ----------------------------------------------------------------------- tslime
+nnoremap _ :Tmux<space>
+nmap _r <Plug>SetTmuxVars
+nmap __ <Plug>NormalModeSendToTmux
+" Send the selection followed by a newline.
+" vmap _ <Plug>SendSelectionToTmux:Tmux<cr>
+vmap _ <Plug>SendSelectionToTmux
+" Send up-arrow (to repeat previous command)
+nnoremap ++ :call Send_to_Tmux("<C-v>OA\n")<CR>
+" -------------------------------------------------------------------- Syntastic
+" let g:syntastic_check_on_open=0
+" let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_checkers = ['']
+let g:syntastic_html_checkers = ['']
+let g:syntastic_scss_checkers = ['']
+let g:tsuquyomi_disable_quickfix = 1
+" -------------------------------------------------------------------------- ale
+let g:ale_linters = {
+\     'html': [],
+\     'typescript': [],
+\     'javascript': ['eslint']
+\}
+" --------------------------------------------------------------- vim-javascript
+" let g:javascript_conceal_function = "λ"
+" ---------------------------------------------------------------------- vim-jsx
+let g:jsx_ext_required = 0
+" --------------------------------------------------------------------- vim-sexp
+" Disable mapping hooks
+let g:sexp_filetypes = ''
+
+" ==============================================================================
+" ABBREVIATION
+" ------------------------------------------------------------------------------
+" handle typo
+cabbrev W w
+cabbrev Wq wq
+cabbrev Q q
+
+" ==============================================================================
+" AUTOCMD
+" ------------------------------------------------------------------------------
+augroup vimscript
+  autocmd!
+  autocmd Filetype vim setlocal foldmethod=marker
+augroup END
+
+augroup c
+  autocmd!
+  autocmd FileType c setlocal tabstop=4
+  autocmd FileType c setlocal shiftwidth=4
+  autocmd FileType c nnoremap <Leader>c :call Send_to_Tmux("cc ".expand('%')." -o ".expand('%:r')." -g -Wall -O3 -std=c99\n")<CR>
+  autocmd FileType c nnoremap <Leader>r :call Send_to_Tmux("./".expand('%:r')."\n")<CR>
+augroup END
+
+augroup haskell
+  autocmd!
+  autocmd FileType haskell nnoremap <buffer> <C-h>g :HoogleInfo<space>
+  autocmd FileType haskell nnoremap <buffer> <C-h>q :HoogleClose<cr>
+  " autocmd Filetype haskell setlocal tabstop=4
+  " autocmd Filetype haskell setlocal shiftwidth=4
+  " autocmd Filetype haskell let g:haskell_indent_case = 4
+  autocmd Filetype haskell let g:haskell_indent_in = 0
+  " autocmd Filetype haskell let g:haskell_indent_guard = 4
+  autocmd FileType haskell nnoremap <Leader>l :call Send_to_Tmux(":load ".expand('%')."\n")<CR>
+  autocmd FileType haskell nnoremap <Leader>i vip>.`>o<esc>0i:}<esc>`<Rlet <esc>O:{<esc>
+  autocmd FileType haskell nnoremap <Leader>t :call Send_to_Tmux("runhaskell -isrc ".GetHaskellTestFile()."\n")<CR>
+  autocmd FileType haskell nnoremap <Leader>a :call Send_to_Tmux("stack test\n")<CR>
+  autocmd FileType haskell nnoremap <Leader>s vip<esc>'<viw'
+augroup END
+
+augroup VIM_SEXP_MAPPING
+  autocmd!
+  autocmd FileType racket,clojure,scheme,lisp call s:vim_sexp_mappings()
+  autocmd FileType racket,clojure,scheme,lisp let b:AutoPairs={'(':')', '[':']', '{':'}','"':'"'}
+augroup END
+
+augroup javascript
+  autocmd!
+  autocmd Filetype javascript setlocal conceallevel=1
+  autocmd Filetype javascript setlocal tabstop=2
+  autocmd Filetype javascript setlocal shiftwidth=2
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("node_modules/tape/bin/tape -r babel-register ".GetTestFile()." \| faucet\n")<cr>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("npm run --silent test:unit ".GetTestFile()." \| node_modules/tap-diff/distributions/cli.js\n")<cr>
+  autocmd FileType javascript nnoremap <Leader>b :call Send_to_Tmux("npm run build:test\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>f :call Send_to_Tmux("npm run --silent flow ".expand('%')."\n")<CR>
+  autocmd FileType javascript nnoremap <Leader>f :call Send_to_Tmux("node_modules/flow-bin/cli.js ".expand('%')."\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("npm run --silent test:unit ".GetTestFile()."\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("npm run --silent test\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("./test-unit.sh ".GetTestFile()."\n")<CR>
+  autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("node ".expand('%')." \| faucet\n")<CR>
+  autocmd FileType javascript nnoremap <Leader>r :call Send_to_Tmux("npm run --silent test:unit:browser ".GetTestFile()."\n")<CR>
+augroup END
+
+augroup HTML
+  autocmd!
+  " use tab key as abbreviation expander on Emmet.vim
+  autocmd Filetype html imap <buffer> <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+  autocmd Filetype html nnoremap <buffer> <leader>c I<!--<esc>A--><esc>
+augroup END
+
+augroup CSS
+  autocmd!
+  autocmd Filetype css imap <buffer> <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+augroup END
+
+augroup Scss
+  autocmd!
+  autocmd Filetype scss imap <buffer> <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+augroup END
+
+function! s:vim_sexp_mappings()
+  xmap <silent><buffer> af         <Plug>(sexp_outer_list)
+  omap <silent><buffer> af         <Plug>(sexp_outer_list)
+  xmap <silent><buffer> if         <Plug>(sexp_inner_list)
+  omap <silent><buffer> if         <Plug>(sexp_inner_list)
+  xmap <silent><buffer> aF         <Plug>(sexp_outer_top_list)
+  omap <silent><buffer> aF         <Plug>(sexp_outer_top_list)
+  xmap <silent><buffer> iF         <Plug>(sexp_inner_top_list)
+  omap <silent><buffer> iF         <Plug>(sexp_inner_top_list)
+  xmap <silent><buffer> as         <Plug>(sexp_outer_string)
+  omap <silent><buffer> as         <Plug>(sexp_outer_string)
+  xmap <silent><buffer> is         <Plug>(sexp_inner_string)
+  omap <silent><buffer> is         <Plug>(sexp_inner_string)
+  xmap <silent><buffer> ae         <Plug>(sexp_outer_element)
+  omap <silent><buffer> ae         <Plug>(sexp_outer_element)
+  xmap <silent><buffer> ie         <Plug>(sexp_inner_element)
+  omap <silent><buffer> ie         <Plug>(sexp_inner_element)
+  nmap <silent><buffer> (          <Plug>(sexp_move_to_prev_bracket)
+  xmap <silent><buffer> (          <Plug>(sexp_move_to_prev_bracket)
+  omap <silent><buffer> (          <Plug>(sexp_move_to_prev_bracket)
+  nmap <silent><buffer> )          <Plug>(sexp_move_to_next_bracket)
+  xmap <silent><buffer> )          <Plug>(sexp_move_to_next_bracket)
+  omap <silent><buffer> )          <Plug>(sexp_move_to_next_bracket)
+  nmap <silent><buffer> B          <Plug>(sexp_move_to_prev_element_head)
+  xmap <silent><buffer> B          <Plug>(sexp_move_to_prev_element_head)
+  omap <silent><buffer> B          <Plug>(sexp_move_to_prev_element_head)
+  nmap <silent><buffer> W          <Plug>(sexp_move_to_next_element_head)
+  xmap <silent><buffer> W          <Plug>(sexp_move_to_next_element_head)
+  omap <silent><buffer> W          <Plug>(sexp_move_to_next_element_head)
+  nmap <silent><buffer> E          <Plug>(sexp_move_to_next_element_tail)
+  xmap <silent><buffer> E          <Plug>(sexp_move_to_next_element_tail)
+  omap <silent><buffer> E          <Plug>(sexp_move_to_next_element_tail)
+  nmap <silent><buffer> [[         <Plug>(sexp_move_to_prev_top_element)
+  xmap <silent><buffer> [[         <Plug>(sexp_move_to_prev_top_element)
+  omap <silent><buffer> [[         <Plug>(sexp_move_to_prev_top_element)
+  nmap <silent><buffer> ]]         <Plug>(sexp_move_to_next_top_element)
+  xmap <silent><buffer> ]]         <Plug>(sexp_move_to_next_top_element)
+  omap <silent><buffer> ]]         <Plug>(sexp_move_to_next_top_element)
+  nmap <silent><buffer> [e         <Plug>(sexp_select_prev_element)
+  xmap <silent><buffer> [e         <Plug>(sexp_select_prev_element)
+  omap <silent><buffer> [e         <Plug>(sexp_select_prev_element)
+  nmap <silent><buffer> ]e         <Plug>(sexp_select_next_element)
+  xmap <silent><buffer> ]e         <Plug>(sexp_select_next_element)
+  omap <silent><buffer> ]e         <Plug>(sexp_select_next_element)
+  nmap <silent><buffer> ==         <Plug>(sexp_indent)
+  nmap <silent><buffer> =-         <Plug>(sexp_indent_top)
+  nmap <silent><buffer> <Leader>i  <Plug>(sexp_round_head_wrap_list)
+  xmap <silent><buffer> <Leader>i  <Plug>(sexp_round_head_wrap_list)
+  nmap <silent><buffer> <Leader>I  <Plug>(sexp_round_tail_wrap_list)
+  xmap <silent><buffer> <Leader>I  <Plug>(sexp_round_tail_wrap_list)
+  nmap <silent><buffer> <Leader>[  <Plug>(sexp_square_head_wrap_list)
+  xmap <silent><buffer> <Leader>[  <Plug>(sexp_square_head_wrap_list)
+  nmap <silent><buffer> <Leader>]  <Plug>(sexp_square_tail_wrap_list)
+  xmap <silent><buffer> <Leader>]  <Plug>(sexp_square_tail_wrap_list)
+  nmap <silent><buffer> <Leader>{  <Plug>(sexp_curly_head_wrap_list)
+  xmap <silent><buffer> <Leader>{  <Plug>(sexp_curly_head_wrap_list)
+  nmap <silent><buffer> <Leader>}  <Plug>(sexp_curly_tail_wrap_list)
+  xmap <silent><buffer> <Leader>}  <Plug>(sexp_curly_tail_wrap_list)
+  nmap <silent><buffer> <Leader>w  <Plug>(sexp_round_head_wrap_element)
+  xmap <silent><buffer> <Leader>w  <Plug>(sexp_round_head_wrap_element)
+  nmap <silent><buffer> <Leader>W  <Plug>(sexp_round_tail_wrap_element)
+  xmap <silent><buffer> <Leader>W  <Plug>(sexp_round_tail_wrap_element)
+  nmap <silent><buffer> <Leader>e[ <Plug>(sexp_square_head_wrap_element)
+  xmap <silent><buffer> <Leader>e[ <Plug>(sexp_square_head_wrap_element)
+  nmap <silent><buffer> <Leader>e] <Plug>(sexp_square_tail_wrap_element)
+  xmap <silent><buffer> <Leader>e] <Plug>(sexp_square_tail_wrap_element)
+  nmap <silent><buffer> <Leader>e{ <Plug>(sexp_curly_head_wrap_element)
+  xmap <silent><buffer> <Leader>e{ <Plug>(sexp_curly_head_wrap_element)
+  nmap <silent><buffer> <Leader>e} <Plug>(sexp_curly_tail_wrap_element)
+  xmap <silent><buffer> <Leader>e} <Plug>(sexp_curly_tail_wrap_element)
+  nmap <silent><buffer> <i         <Plug>(sexp_insert_at_list_head)
+  nmap <silent><buffer> >a         <Plug>(sexp_insert_at_list_tail)
+  nmap <silent><buffer> <Leader>@  <Plug>(sexp_splice_list)
+  nmap <silent><buffer> <Leader>o  <Plug>(sexp_raise_list)
+  xmap <silent><buffer> <Leader>o  <Plug>(sexp_raise_list)
+  nmap <silent><buffer> <Leader>O  <Plug>(sexp_raise_element)
+  xmap <silent><buffer> <Leader>O  <Plug>(sexp_raise_element)
+  nmap <silent><buffer> <f         <Plug>(sexp_swap_list_backward)
+  xmap <silent><buffer> <f         <Plug>(sexp_swap_list_backward)
+  nmap <silent><buffer> >f         <Plug>(sexp_swap_list_forward)
+  xmap <silent><buffer> >f         <Plug>(sexp_swap_list_forward)
+  nmap <silent><buffer> <e         <Plug>(sexp_swap_element_backward)
+  xmap <silent><buffer> <e         <Plug>(sexp_swap_element_backward)
+  nmap <silent><buffer> >e         <Plug>(sexp_swap_element_forward)
+  xmap <silent><buffer> >e         <Plug>(sexp_swap_element_forward)
+  nmap <silent><buffer> >(         <Plug>(sexp_emit_head_element)
+  xmap <silent><buffer> >(         <Plug>(sexp_emit_head_element)
+  nmap <silent><buffer> <)         <Plug>(sexp_emit_tail_element)
+  xmap <silent><buffer> <)         <Plug>(sexp_emit_tail_element)
+  nmap <silent><buffer> <(         <Plug>(sexp_capture_prev_element)
+  xmap <silent><buffer> <(         <Plug>(sexp_capture_prev_element)
+  nmap <silent><buffer> >)         <Plug>(sexp_capture_next_element)
+  xmap <silent><buffer> >)         <Plug>(sexp_capture_next_element)
+  imap <silent><buffer> <BS>       <Plug>(sexp_insert_backspace)
+  imap <silent><buffer> "          <Plug>(sexp_insert_double_quote)
+  imap <silent><buffer> (          <Plug>(sexp_insert_opening_round)
+  imap <silent><buffer> )          <Plug>(sexp_insert_closing_round)
+  imap <silent><buffer> [          <Plug>(sexp_insert_opening_square)
+  imap <silent><buffer> ]          <Plug>(sexp_insert_closing_square)
+  imap <silent><buffer> {          <Plug>(sexp_insert_opening_curly)
+  imap <silent><buffer> }          <Plug>(sexp_insert_closing_curly)
+endfunction
+
+function! GetTestFile()
+  let l:path = expand('%')
+  return substitute(l:path, '\(.test\)\?.js', '.test.js', "")
+endfunction

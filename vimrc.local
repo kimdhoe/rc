@@ -1,0 +1,207 @@
+" ==============================================================================
+" SETTINGS
+" ----------------------------------------------------------------- 1. important
+" Use vim defaults not vi defaults
+set nocompatible
+" ----------------------------------------------------------- 4. displaying text
+" Number of screen lines to show around the cursor
+" set scrolloff=1
+" ----------------------------------------- 5. syntax, highlighting and spelling
+set hlsearch
+set background=dark
+colorscheme seoul256
+" ---------------------------------------------------------- 6. multiple windows
+set statusline=[%n]\ %<%f\ %m\ \ [%R%H%W%Y][%{&ff}]\ \ %=\ l:\ %l/%L\ \ c:\ %c\ \ \ %p%%
+" -------------------------------------------------------------------- #Termanal
+" Terminal connection is fast
+set ttyfast
+" ------------------------------------------------------------- 14. editing text
+" When inserting a bracket, briefly jump to its match
+set showmatch
+" Numbers are recognozed as decimal for ctrl-a(x)
+set nrformats-=octal
+" ------------------------------------------------------- 15. tabs and indenting
+set smarttab
+set autoindent
+set smartindent
+" ---------------------------------------------------- 25. multi-byte characters
+set encoding=utf-8
+
+" ==============================================================================
+" MAPPINGS
+" ------------------------------------------------------------------------------
+let maplocalleader = '\\'
+" ------------------------------------------------------------------------------
+nnoremap H ^
+vnoremap H ^
+nnoremap L $
+vnoremap L $
+nnoremap <C-k> H
+vnoremap <C-k> H
+nnoremap <C-j> L
+vnoremap <C-j> L
+" Edit local vimrc in a new tab
+nnoremap <Leader>ve :tabe ~/.vimrc.local<CR>
+" Source local vimrc
+nnoremap <Leader>vs :source ~/.vimrc.local<CR>:noh<CR>
+" Return to normal mode
+inoremap jk <ESC>
+inoremap fd <ESC>
+" Make j and k work on visual lines
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+" Make Y behave as C and D
+nnoremap Y y$
+" Play a macro recorded to register 'q'
+nnoremap , @q
+" Substitute all words under the caret
+nnoremap <leader>gs :%s/\<<C-r><C-w>\>/
+" Substitute all words under the caret in current line
+nnoremap <leader>.s :s/\<<C-r><C-w>\>/
+" Highlight all words under the cursor not jumping to next word
+" nnoremap * *N
+" Highlight all words exactly same as the word under the caret
+nnoremap * :set hlsearch<CR>:let @/='\<<C-r><C-w>\>'<CR>
+" :nohlsearch
+nnoremap <leader><CR> :noh<cr>
+" Highlight trailing whitespace
+" nnoremap <leader>w :match Error /  *$/<cr>
+" inside/around
+onoremap inb :<c-u>normal! f(vi(<cr>
+onoremap in( :<c-u>normal! f(vi(<cr>
+onoremap in{ :<c-u>normal! f{vi{<cr>
+onoremap in' :<c-u>normal! f'vi'<cr>
+onoremap iN' :<c-u>normal! F'vi'<cr>
+onoremap arb :<c-u>normal! f(va(<cr>
+onoremap ar( :<c-u>normal! f(va(<cr>
+onoremap ar{ :<c-u>normal! f{va{<cr>
+onoremap ar' :<c-u>normal! f'va'<cr>
+onoremap ilb :<c-u>normal! F(vi(<cr>
+onoremap il( :<c-u>normal! F)vi(<cr>
+onoremap il{ :<c-u>normal! F}vi{<cr>
+onoremap il' :<c-u>normal! F'vi'<cr>
+" Paste from system clipboard
+nnoremap <leader>p :set paste<cr>o<esc>"*]p:set nopaste<cr>
+nnoremap <leader>P :set paste<cr>O<esc>"*]p:set nopaste<cr>
+
+" ==============================================================================
+" PLUGINS
+" --------------------------------------------------------------------- Fugitive
+" Open Gstatus
+nnoremap <c-g>s :Gstatus<cr>
+" -------------------------------------------------------------------- Nerd Tree
+" Open/close
+nnoremap <C-h><C-l> :NERDTreeToggle<cr>
+" ------------------------------------------------------------------------ Emmet
+" Expand
+imap ,, <C-y>,
+" -------------------------------------------------------------------- EasyAlign
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+" -------------------------------------------------------------------- UltiSnips
+" Add custom snippets
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_snippets"]
+" -------------------------------------------------------------------- vim-rspec
+" nnoremap <Leader>a :call RunAllSpecs()<CR>
+" let g:rspec_command = 'call Send_to_Tmux("clear; rspec {spec}\n")'
+" --------------------------------------------------------------------- vim-test
+let test#strategy = 'tslime'
+let test#javascript#mocha#file_pattern = '\v\.test\.(js|jsx|coffee)$'
+nnoremap <silent> <leader>s :TestNearest<CR>
+nnoremap <silent> <leader>t :TestFile<CR>
+nnoremap <silent> <leader>l :TestLast<CR>
+nnoremap <silent> <leader>a :TestSuite<CR>
+" ----------------------------------------------------------------------- tslime
+nnoremap _ :Tmux<space>
+nmap _r <Plug>SetTmuxVars
+nmap __ <Plug>NormalModeSendToTmux
+" Send the selection followed by a newline.
+" vmap _ <Plug>SendSelectionToTmux:Tmux<cr>
+vmap _ <Plug>SendSelectionToTmux
+" Send up-arrow (to repeat previous command)
+nnoremap ++ :call Send_to_Tmux("<C-v>OA\n")<CR>
+" -------------------------------------------------------------------- Syntastic
+" let g:syntastic_check_on_open=0
+" let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_checkers = ['']
+let g:syntastic_html_checkers = ['']
+let g:syntastic_scss_checkers = ['']
+let g:syntastic_racket_checkers = ['']
+let g:syntastic_typescript_checkers = ['tsuquyomi']
+" let g:syntastic_typescript_checkers = []
+" -------------------------------------------------------------------------- ale
+let g:ale_linters = {
+\     'html': [],
+\     'typescript': [],
+\     'javascript': ['eslint']
+\}
+" --------------------------------------------------------------- vim-javascript
+" let g:javascript_conceal_function = "λ"
+" ---------------------------------------------------------------------- vim-jsx
+let g:jsx_ext_required = 0
+
+" ==============================================================================
+" ABBREVIATIONS
+" ------------------------------------------------------------------------------
+" Handle typo
+cabbrev W w
+cabbrev Wq wq
+cabbrev Q q
+
+" ==============================================================================
+" AUTOCMD
+" ------------------------------------------------------------------------------
+augroup vimscript
+  autocmd!
+  autocmd Filetype vim setlocal foldmethod=marker
+augroup END
+
+augroup c
+  autocmd!
+  autocmd FileType c setlocal tabstop=4
+  autocmd FileType c setlocal shiftwidth=4
+  autocmd FileType c nnoremap <Leader>c :call Send_to_Tmux("cc ".expand('%')." -o ".expand('%:r')." -g -Wall -O3 -std=c99\n")<CR>
+  autocmd FileType c nnoremap <Leader>r :call Send_to_Tmux("./".expand('%:r')."\n")<CR>
+augroup END
+
+augroup javascript
+  autocmd!
+  autocmd Filetype javascript setlocal conceallevel=1
+  autocmd Filetype javascript setlocal tabstop=2
+  autocmd Filetype javascript setlocal shiftwidth=2
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("node_modules/tape/bin/tape -r babel-register ".GetTestFile()." \| faucet\n")<cr>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("npm run --silent test:unit ".GetTestFile()." \| node_modules/tap-diff/distributions/cli.js\n")<cr>
+  autocmd FileType javascript nnoremap <Leader>b :call Send_to_Tmux("npm run build:test\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>f :call Send_to_Tmux("npm run --silent flow ".expand('%')."\n")<CR>
+  autocmd FileType javascript nnoremap <Leader>f :call Send_to_Tmux("node_modules/flow-bin/cli.js ".expand('%')."\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("npm run --silent test:unit ".GetTestFile()."\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("npm run --silent test\n")<CR>
+  " autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("./test-unit.sh ".GetTestFile()."\n")<CR>
+  autocmd FileType javascript nnoremap <Leader>t :call Send_to_Tmux("node ".expand('%')." \| faucet\n")<CR>
+  autocmd FileType javascript nnoremap <Leader>r :call Send_to_Tmux("npm run --silent test:unit:browser ".GetTestFile()."\n")<CR>
+augroup END
+autocmd BufRead,BufNewFile .{babel,eslint}rc set filetype=json
+
+augroup HTML
+  autocmd!
+  " Use tab key as abbreviation expander on Emmet.vim
+  autocmd Filetype html imap <buffer> <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+  autocmd Filetype html nnoremap <buffer> <leader>c I<!--<esc>A--><esc>
+augroup END
+
+augroup CSS
+  autocmd!
+  autocmd Filetype css imap <buffer> <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+augroup END
+
+augroup Scss
+  autocmd!
+  autocmd Filetype scss imap <buffer> <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+augroup END
+
+function! GetTestFile()
+  let l:path = expand('%')
+  return substitute(l:path, '\(.test\)\?.js', '.test.js', "")
+endfunction

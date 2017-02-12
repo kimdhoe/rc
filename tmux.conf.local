@@ -1,0 +1,29 @@
+bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
+bind "c" new-window -c "#{pane_current_path}"
+bind % split-window -h -c "#{pane_current_path}"
+bind '"' split-window -v -c "#{pane_current_path}"
+
+set -g status-right "( #S ) "
+
+bind -n S-Left resize-pane -L 2
+bind -n S-Right resize-pane -R 2
+bind Up resize-pane -U 1
+bind Down resize-pane -D 1
+
+bind < resize-pane -L 5
+bind > resize-pane -R 5
+bind + resize-pane -U 10
+bind - resize-pane -D 10
+
+# update default binding of `Enter` to also use copy-pipe
+unbind -t vi-copy Enter
+bind-key -t vi-copy Enter copy-pipe "pbcopy"
+
+# break current pane into window
+bind b break-pane -d
+
+# prompted join-pane
+bind J command-prompt -p "join pane from: " "join-pane -h -s '%%'"
+
+# swap a pane (targeted by pane number) with current pane
+bind C-s command-prompt -p "pane #: " "swap-pane -t '%%'"
