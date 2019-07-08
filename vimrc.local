@@ -8,8 +8,8 @@ set nocompatible
 " set scrolloff=1
 " ----------------------------------------- 5. syntax, highlighting and spelling
 set hlsearch
-set background=dark
-colorscheme seoul256
+set background=light
+colorscheme NeoSolarized
 " ---------------------------------------------------------- 6. multiple windows
 set statusline=[%n]\ %<%f\ %m\ \ [%R%H%W%Y][%{&ff}]\ \ %=\ l:\ %l/%L\ \ c:\ %c\ \ \ %p%%
 " -------------------------------------------------------------------- #Termanal
@@ -89,6 +89,7 @@ nnoremap <leader>P :set paste<cr>O<esc>"*]p:set nopaste<cr>
 " ==============================================================================
 " PLUGINS
 " --------------------------------------------------------------------- Fugitive
+nnoremap <C-p> :FZF<cr>
 " Open Gstatus
 nnoremap <c-g>s :Gstatus<cr>
 " -------------------------------------------------------------------- Nerd Tree
@@ -121,7 +122,7 @@ nmap __ <Plug>NormalModeSendToTmux
 " vmap _ <Plug>SendSelectionToTmux:Tmux<cr>
 vmap _ <Plug>SendSelectionToTmux
 " Send up-arrow (to repeat previous command)
-nnoremap ++ :call Send_to_Tmux("<C-v>OA\n")<CR>
+nnoremap ++ :call Send_to_Tmux("<C-v>OA\n")<CR>
 " -------------------------------------------------------------------- Syntastic
 " let g:syntastic_check_on_open=0
 " let g:syntastic_javascript_checkers = ['eslint']

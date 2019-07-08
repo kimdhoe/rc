@@ -2,7 +2,4 @@
   name = kimdhoe
   email = kimdhoe1@gmail.com
 [core]
-  editor = mvim -v
-[alias]
-  lg = log --oneline --all --graph --decorate
-
+  editor = nvim

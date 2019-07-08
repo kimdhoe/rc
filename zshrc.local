@@ -1,27 +1,63 @@
+# Fix locale error (happened after homebrew update...)
+export LC_ALL=ko_KR.UTF-8
+
+SPACESHIP_CHAR_SYMBOL="❯ "
+SPACESHIP_PROMPT_ORDER=(
+  time          # Time stamps section
+  user          # Username section
+  dir           # Current directory section
+  host          # Hostname section
+  git           # Git section (git_branch + git_status)
+  # hg            # Mercurial section (hg_branch  + hg_status)
+  # package       # Package version
+  node          # Node.js section
+  # ruby          # Ruby section
+  # elixir        # Elixir section
+  xcode         # Xcode section
+  swift         # Swift section
+  # golang        # Go section
+  # php           # PHP section
+  # rust          # Rust section
+  # haskell       # Haskell Stack section
+  # julia         # Julia section
+  docker        # Docker section
+  aws           # Amazon Web Services section
+  venv          # virtualenv section
+  conda         # conda virtualenv section
+  pyenv         # Pyenv section
+  # dotnet        # .NET section
+  # ember         # Ember.js section
+  kubecontext   # Kubectl context section
+  # terraform     # Terraform workspace section
+  exec_time     # Execution time
+  line_sep      # Line break
+  battery       # Battery level and status
+  # vi_mode       # Vi-mode indicator
+  jobs          # Background jobs indicator
+  exit_code     # Exit code section
+  char          # Prompt character
+)
 # git prompt
 # https://github.com/robbyrussell/oh-my-zsh/blob/master/lib/git.zsh
-[[ -f ~/git.zsh ]] && source ~/git.zsh
+# [[ -d ~/installed/zsh-git-prompt ]] && source ~/installed/zsh-git-prompt/zshrc.sh
 
-local ret_status="%(?:%{$fg_bold[green]%}❯ :%{$fg_bold[red]%}❯ %s)"
-PROMPT='
-%{$fg[green]%}%p%{$fg[cyan]%}%~%{$fg[blue]%}   $(git_prompt_info)%{$fg[blue]%}%{$reset_color%}
-${ret_status}%{$reset_color%}'
+# local ret_status="%(?:%{$fg_bold[green]%}❯ :%{$fg_bold[red]%}❯ %s)"
+
+# %B%m%~ %b$(git_super_status)
+# %p%~ %b$(git_super_status)
+# PROMPT='
+# %{$fg[green]%}%p%{$fg[cyan]%}%~%{$fg[blue]%} %b$(git_super_status)
+# ${ret_status}%{$reset_color%}'
+# %#'
+# PROMPT='
+# %{$fg[green]%}%p%{$fg[cyan]%}%~%{$fg[blue]%}   $(git_super_status)%{$fg[blue]%}%{$reset_color%}
+# ${ret_status}%{$reset_color%}'
 # RPS1='%{$fg[blue]%} $(git_prompt_info)%{$fg[blue]%}%{$reset_color%}'
 
-ZSH_THEME_GIT_PROMPT_PREFIX="[ %{$fg[red]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%} ] %{$fg[yellow]%}✗%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%} ]"
+# ZSH_THEME_GIT_PROMPT_PREFIX="[ %{$fg[red]%}"
+# ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+# ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%} ] %{$fg[yellow]%}✗%{$reset_color%}"
+# ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%} ]"
 
 # keybindings
 bindkey "jk" vi-cmd-mode
-
-PATH="$HOME/.local/bin:$PATH"
-PATH="$HOME/.rbenv/bin:$PATH"
-PATH="$HOME/bin:$PATH"
-export PATH
-# !!!
-# homebrew_github_api_token
-# !!!
-eval "$(rbenv init -)"
-
