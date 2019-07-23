@@ -1,6 +1,9 @@
 # Fix locale error (happened after homebrew update...)
 export LC_ALL=ko_KR.UTF-8
 
+# Fix vim losing colors in tmux
+alias tmux="TERM=screen-256color-bce tmux"
+
 SPACESHIP_CHAR_SYMBOL="❯ "
 SPACESHIP_PROMPT_ORDER=(
   time          # Time stamps section

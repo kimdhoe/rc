@@ -8,8 +8,9 @@ set nocompatible
 " set scrolloff=1
 " ----------------------------------------- 5. syntax, highlighting and spelling
 set hlsearch
-set background=light
-colorscheme NeoSolarized
+set background=dark
+colorscheme tender
+" colorscheme NeoSolarized
 " ---------------------------------------------------------- 6. multiple windows
 set statusline=[%n]\ %<%f\ %m\ \ [%R%H%W%Y][%{&ff}]\ \ %=\ l:\ %l/%L\ \ c:\ %c\ \ \ %p%%
 " -------------------------------------------------------------------- #Termanal
@@ -184,6 +185,11 @@ augroup javascript
   autocmd FileType javascript nnoremap <Leader>r :call Send_to_Tmux("npm run --silent test:unit:browser ".GetTestFile()."\n")<CR>
 augroup END
 autocmd BufRead,BufNewFile .{babel,eslint}rc set filetype=json
+
+augroup python
+  autocmd!
+  autocmd FileType python nnoremap <Leader>r :call Send_to_Tmux("python ".expand('%')."\n")<CR>
+augroup END
 
 augroup HTML
   autocmd!

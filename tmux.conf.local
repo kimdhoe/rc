@@ -1,3 +1,5 @@
+set -g default-terminal "xterm-256color"
+
 bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
 bind "c" new-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"
