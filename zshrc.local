@@ -4,6 +4,9 @@ export LC_ALL=ko_KR.UTF-8
 # Fix vim losing colors in tmux
 alias tmux="TERM=screen-256color-bce tmux"
 
+# github-release-notes
+export GREN_GITHUB_TOKEN=7722f147309be605de7c73565af5f0f55951f270
+
 SPACESHIP_CHAR_SYMBOL="❯ "
 SPACESHIP_PROMPT_ORDER=(
   time          # Time stamps section

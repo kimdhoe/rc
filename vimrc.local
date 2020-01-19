@@ -8,9 +8,10 @@ set nocompatible
 " set scrolloff=1
 " ----------------------------------------- 5. syntax, highlighting and spelling
 set hlsearch
-set background=dark
-colorscheme tender
 " colorscheme NeoSolarized
+set termguicolors
+set background=dark
+colorscheme monokai_pro
 " ---------------------------------------------------------- 6. multiple windows
 set statusline=[%n]\ %<%f\ %m\ \ [%R%H%W%Y][%{&ff}]\ \ %=\ l:\ %l/%L\ \ c:\ %c\ \ \ %p%%
 " -------------------------------------------------------------------- #Termanal

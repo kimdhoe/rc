@@ -1,4 +1,6 @@
 UnPlug 'ctrlpvim/ctrlp.vim'
+Plug 'phanviet/vim-monokai-pro'
+Plug 'jacoborus/tender.vim'
 Plug 'altercation/vim-colors-solarized'
 Plug 'GertjanReynaert/cobalt2-vim-theme'
 Plug 'jonathanfilip/vim-lucius'
